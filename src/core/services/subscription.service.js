@@ -1,5 +1,7 @@
 const db = require('../../db/db');
 const githubClient = require('../clients/github.client');
+const notifierService = require('./notifier.service');
+const Logger = require('../utils/logger');
 
 class SubscriptionService {
   async subscribe(email, repo) {
@@ -12,9 +14,8 @@ class SubscriptionService {
 
     // 1. Пошук або створення репозиторію
     let repository = await db('repositories').where({ owner, repo: repoName }).first();
-    
+
     if (!repository) {
-      // ПЕРЕВІРКА: чи існує репо на GitHub
       const exists = await githubClient.repositoryExists(owner, repoName);
       if (!exists) {
         const error = new Error(`Repository ${owner}/${repoName} not found on GitHub`);
@@ -22,14 +23,15 @@ class SubscriptionService {
         throw error;
       }
 
-      // Отримуємо початковий тег
       const initialTag = await githubClient.getLatestTag(owner, repoName);
 
-      [repository] = await db('repositories').insert({ 
-        owner, 
+      [repository] = await db('repositories').insert({
+        owner,
         repo: repoName,
-        last_seen_tag: initialTag 
+        last_seen_tag: initialTag
       }).returning('*');
+
+      Logger.log('SubscriptionService', `Created new repository record: ${owner}/${repoName}`);
     }
 
     // 2. Знайти або створити підписника
@@ -40,6 +42,12 @@ class SubscriptionService {
         confirmation_token: Buffer.from(`${email}-${Date.now()}`).toString('base64'),
         unsubscribe_token: Buffer.from(`unsub-${email}-${Date.now()}`).toString('base64')
       }).returning('*');
+
+      Logger.log('SubscriptionService', `Created new subscriber: ${email}`);
+    }
+
+    if (!subscriber.confirmed) {
+      await notifierService.sendConfirmationEmail(email, subscriber.confirmation_token);
     }
 
     // 3. Створити підписку
@@ -58,31 +66,43 @@ class SubscriptionService {
       repository_id: repository.id
     });
 
-    return { message: 'Subscription successful' };
+    return {
+      message: subscriber.confirmed
+        ? 'Subscription successful'
+        : 'Subscription requested. Please check your email to confirm.'
+    };
   }
 
   async confirm(token) {
     const subscriber = await db('subscribers').where({ confirmation_token: token }).first();
     if (!subscriber) {
-      const error = new Error('Token not found');
+      const error = new Error('Invalid or expired confirmation token');
       error.status = 404;
       throw error;
     }
 
+    if (subscriber.confirmed) {
+      return { message: 'Email already confirmed' };
+    }
+
     await db('subscribers').where({ id: subscriber.id }).update({ confirmed: true });
-    return { message: 'Subscription confirmed successfully' };
+    Logger.log('SubscriptionService', `Subscriber confirmed: ${subscriber.email}`);
+
+    return { message: 'Subscription confirmed successfully! You will now receive release notifications.' };
   }
 
   async unsubscribe(token) {
     const subscriber = await db('subscribers').where({ unsubscribe_token: token }).first();
     if (!subscriber) {
-      const error = new Error('Token not found');
+      const error = new Error('Invalid unsubscribe token');
       error.status = 404;
       throw error;
     }
 
     await db('subscriptions').where({ subscriber_id: subscriber.id }).del();
-    return { message: 'Unsubscribed successfully' };
+    Logger.log('SubscriptionService', `User unsubscribed: ${subscriber.email}`);
+
+    return { message: 'You have been successfully unsubscribed from all notifications.' };
   }
 
   async getAllByEmail(email) {

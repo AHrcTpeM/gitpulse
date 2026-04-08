@@ -2,6 +2,7 @@ const cron = require('node-cron');
 const db = require('../../db/db');
 const githubClient = require('../clients/github.client');
 const Logger = require('../utils/logger');
+const notifierService = require('./notifier.service');
 
 class ScannerService {
   constructor() {
@@ -74,8 +75,7 @@ class ScannerService {
             updated_at: db.fn.now()
           });
 
-        // ТУТ МИ БУДЕМО ВИКЛИКАТИ NOTIFIER
-        // await notifierService.notify(id, currentTag);
+        await notifierService.notify(id, currentTag);
       }
     } catch (error) {
       Logger.error('Scanner', `Error processing ${owner}/${repo}: ${error.message}`);
