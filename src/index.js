@@ -6,6 +6,7 @@ require('dotenv').config();
 
 const apiRoutes = require('./api/subscription.routes');
 const { notFoundHandler, globalErrorHandler } = require('./api/error.handler');
+const scannerService = require('./core/services/scanner.service');
 
 const swaggerPath = path.join(__dirname, 'api', 'swagger.yaml');
 const swaggerDocument = yaml.load(swaggerPath);
@@ -34,6 +35,9 @@ const startServer = async () => {
     console.log('Running migrations...');
     await db.migrate.latest();
     console.log('Migrations completed successfully.');
+    
+    // Запуск фонового сканера
+    scannerService.init();
 
     app.listen(PORT, () => {
       console.log(`Server is running on http://localhost:${PORT}`);

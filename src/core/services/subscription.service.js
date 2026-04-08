@@ -1,4 +1,5 @@
 const db = require('../../db/db');
+const githubClient = require('../clients/github.client');
 
 class SubscriptionService {
   async subscribe(email, repo) {
@@ -9,10 +10,26 @@ class SubscriptionService {
     }
     const [owner, repoName] = repo.split('/');
 
-    // 1. Знайти або створити репозиторій
+    // 1. Пошук або створення репозиторію
     let repository = await db('repositories').where({ owner, repo: repoName }).first();
+    
     if (!repository) {
-      [repository] = await db('repositories').insert({ owner, repo: repoName }).returning('*');
+      // ПЕРЕВІРКА: чи існує репо на GitHub
+      const exists = await githubClient.repositoryExists(owner, repoName);
+      if (!exists) {
+        const error = new Error(`Repository ${owner}/${repoName} not found on GitHub`);
+        error.status = 404;
+        throw error;
+      }
+
+      // Отримуємо початковий тег
+      const initialTag = await githubClient.getLatestTag(owner, repoName);
+
+      [repository] = await db('repositories').insert({ 
+        owner, 
+        repo: repoName,
+        last_seen_tag: initialTag 
+      }).returning('*');
     }
 
     // 2. Знайти або створити підписника

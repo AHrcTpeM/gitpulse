@@ -20,6 +20,8 @@ services:
 
   app:
     build: .
+    environment:
+      - DB_HOST=db
     ports:
       - "${PORT:-3000}:${PORT:-3000}"
     env_file:
