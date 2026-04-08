@@ -1,6 +1,7 @@
 const cron = require('node-cron');
 const db = require('../../db/db');
 const githubClient = require('../clients/github.client');
+const Logger = require('../utils/logger');
 
 class ScannerService {
   constructor() {
@@ -15,11 +16,11 @@ class ScannerService {
     // Формат: '0 * * * *' (хв год день міс день_тижня)
     // Для тестів можна поставити '*/1 * * * *' (щохвилини)
     cron.schedule('*/1 * * * *', () => { // TODO:
-      console.log('[Scanner] Starting scheduled scan...');
+      Logger.log('Scanner', 'Starting scheduled scan...');
       this.scan();
     });
 
-    console.log('[Scanner] Engine initialized');
+    Logger.log('Scanner', 'Engine initialized');
   }
 
   /**
@@ -27,7 +28,7 @@ class ScannerService {
    */
   async scan() {
     if (this.isScanning) {
-      console.warn('[Scanner] Scan already in progress, skipping...');
+      Logger.warn('Scanner', 'Scan already in progress, skipping...');
       return;
     }
 
@@ -39,15 +40,15 @@ class ScannerService {
           this.select('*').from('subscriptions').whereRaw('subscriptions.repository_id = repositories.id');
         });
 
-      console.log(`[Scanner] Found ${activeRepos.length} active repositories to scan`);
+      Logger.log('Scanner', `Found ${activeRepos.length} active repositories to scan`);
 
       for (const repoRecord of activeRepos) {
         await this._processRepo(repoRecord);
       }
 
-      console.log('[Scanner] Scan finished successfully');
+      Logger.log('Scanner', 'Scan finished successfully');
     } catch (error) {
-      console.error('[Scanner] Scan failed:', error.message);
+      Logger.error('Scanner', `Scan failed: ${error.message}`);
     } finally {
       this.isScanning = false;
     }
@@ -63,7 +64,7 @@ class ScannerService {
 
       // Якщо це перший скан або тег змінився
       if (last_seen_tag !== currentTag) {
-        console.log(`[Scanner] NEW RELEASE for ${owner}/${repo}: ${last_seen_tag || 'none'} -> ${currentTag}`);
+        Logger.log('Scanner', `NEW RELEASE for ${owner}/${repo}: ${last_seen_tag || 'none'} → ${currentTag}`);
 
         // Оновлюємо тег у базі
         await db('repositories')
@@ -77,7 +78,7 @@ class ScannerService {
         // await notifierService.notify(id, currentTag);
       }
     } catch (error) {
-      console.error(`[Scanner] Error processing ${owner}/${repo}:`, error.message);
+      Logger.error('Scanner', `Error processing ${owner}/${repo}: ${error.message}`);
     }
   }
 }

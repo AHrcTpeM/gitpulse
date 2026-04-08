@@ -1,4 +1,5 @@
 const Redis = require('ioredis');
+const Logger = require('../utils/logger');
 
 const CACHE_TTL_SECONDS = 10 * 60;
 
@@ -10,8 +11,8 @@ const redis = new Redis({
   retryStrategy: () => null,
 });
 
-redis.on('connect', () => console.log('[Redis] Connected'));
-redis.on('error', (err) => console.warn('[Redis] Unavailable, cache disabled:', err.message));
+redis.on('connect', () => Logger.log('Redis', 'Connected'));
+redis.on('error', (err) => Logger.warn('Redis', `Unavailable, cache disabled: ${err.message}`));
 
 /**
  * @param {string} key

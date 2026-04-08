@@ -1,3 +1,5 @@
+const Logger = require('../core/utils/logger');
+
 const notFoundHandler = (req, res) => {
   res.status(404).json({
     statusCode: 404,
@@ -6,7 +8,7 @@ const notFoundHandler = (req, res) => {
 };
 
 const globalErrorHandler = (err, req, res, next) => {
-  console.error('Final Error Catch:', err.stack);
+  Logger.error('ErrorHandler', err.stack || err.message);
 
   const statusCode = err.status || err.statusCode || 500;
   res.status(statusCode).json({

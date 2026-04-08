@@ -7,6 +7,7 @@ require('dotenv').config();
 const apiRoutes = require('./api/subscription.routes');
 const { notFoundHandler, globalErrorHandler } = require('./api/error.handler');
 const scannerService = require('./core/services/scanner.service');
+const Logger = require('./core/utils/logger');
 
 const swaggerPath = path.join(__dirname, 'api', 'swagger.yaml');
 const swaggerDocument = yaml.load(swaggerPath);
@@ -32,19 +33,19 @@ app.use(globalErrorHandler);
 
 const startServer = async () => {
   try {
-    console.log('Running migrations...');
+    Logger.log('Bootstrap', 'Running migrations...');
     await db.migrate.latest();
-    console.log('Migrations completed successfully.');
-    
+    Logger.log('Bootstrap', 'Migrations completed successfully');
+
     // Запуск фонового сканера
     scannerService.init();
 
     app.listen(PORT, () => {
-      console.log(`Server is running on http://localhost:${PORT}`);
-      console.log(`Swagger UI available at http://localhost:${PORT}/api-docs`);
+      Logger.log('Bootstrap', `Server is running on http://localhost:${PORT}`);
+      Logger.log('Bootstrap', `Swagger UI available at http://localhost:${PORT}/api-docs`);
     });
   } catch (error) {
-    console.error('Failed to start server:', error);
+    Logger.error('Bootstrap', `Failed to start server: ${error.message}`);
     process.exit(1);
   }
 };

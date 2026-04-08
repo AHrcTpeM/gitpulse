@@ -1,5 +1,6 @@
 const axios = require('axios');
 const { getCache, setCache } = require('./redis.client');
+const Logger = require('../utils/logger');
 
 class GitHubClient {
   constructor() {
@@ -27,7 +28,7 @@ class GitHubClient {
 
     const cached = await getCache(cacheKey);
     if (cached !== null) {
-      console.log(`[GitHubClient] Cache HIT for tag ${owner}/${repo}: ${cached}`);
+      Logger.verbose('GitHubClient', `Cache HIT tag ${owner}/${repo} → ${cached}`);
       return cached;
     }
 
@@ -74,7 +75,7 @@ class GitHubClient {
 
     const cached = await getCache(cacheKey);
     if (cached !== null) {
-      console.log(`[GitHubClient] Cache HIT for exists ${owner}/${repo}: ${cached}`);
+      Logger.verbose('GitHubClient', `Cache HIT exists ${owner}/${repo} → ${cached}`);
       return cached === 'true';
     }
 
@@ -123,21 +124,21 @@ class GitHubClient {
       const status = error.response.status;
 
       if (status === 404) {
-        console.warn(`[GitHubClient] No releases found for ${owner}/${repo}`);
+        Logger.warn('GitHubClient', `No releases found for ${owner}/${repo}`);
         return null;
       }
 
       if (status === 403 || status === 429) {
         const resetTime = error.response.headers['x-ratelimit-reset'];
         const message = `GitHub Rate Limit exceeded. Resets at ${new Date(resetTime * 1000).toLocaleTimeString()}`;
-        console.error(`[GitHubClient] ${message}`);
+        Logger.error('GitHubClient', message);
         const rateLimitError = new Error(message);
         rateLimitError.status = 429;
         throw rateLimitError;
       }
     }
 
-    console.error(`[GitHubClient] Error fetching ${owner}/${repo}:`, error.message);
+    Logger.error('GitHubClient', `Error fetching ${owner}/${repo}: ${error.message}`);
     throw error;
   }
 }
