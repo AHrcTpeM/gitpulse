@@ -4,11 +4,12 @@ const yaml = require('yamljs');
 const path = require('path');
 require('dotenv').config();
 
-const apiRoutes = require('./api/routes');
-const { notFoundHandler, globalErrorHandler } = require('./api/errorHandler');
+const apiRoutes = require('./api/subscription.routes');
+const { notFoundHandler, globalErrorHandler } = require('./api/error.handler');
 
 const swaggerPath = path.join(__dirname, 'api', 'swagger.yaml');
 const swaggerDocument = yaml.load(swaggerPath);
+const db = require('./db/db');
 
 swaggerDocument.host = `localhost:${process.env.PORT || 3000}`; // TODO:
 
@@ -28,7 +29,20 @@ app.use('/api', apiRoutes);
 app.use(notFoundHandler);
 app.use(globalErrorHandler);
 
-app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
-  console.log(`Swagger UI available at http://localhost:${PORT}/api-docs`);
-});
+const startServer = async () => {
+  try {
+    console.log('Running migrations...');
+    await db.migrate.latest();
+    console.log('Migrations completed successfully.');
+
+    app.listen(PORT, () => {
+      console.log(`Server is running on http://localhost:${PORT}`);
+      console.log(`Swagger UI available at http://localhost:${PORT}/api-docs`);
+    });
+  } catch (error) {
+    console.error('Failed to start server:', error);
+    process.exit(1);
+  }
+};
+
+startServer();
