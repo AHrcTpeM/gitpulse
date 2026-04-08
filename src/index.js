@@ -12,6 +12,7 @@ const Logger = require('./core/utils/logger');
 const swaggerPath = path.join(__dirname, 'api', 'swagger.yaml');
 const swaggerDocument = yaml.load(swaggerPath);
 const db = require('./db/db');
+const loggingMiddleware = require('./api/middlewares/logging.middleware');
 
 swaggerDocument.host = `localhost:${process.env.PORT || 3000}`; // TODO:
 
@@ -20,6 +21,7 @@ const PORT = process.env.PORT || 3000;
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+app.use(loggingMiddleware);
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
