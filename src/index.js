@@ -67,4 +67,8 @@ const startServer = async () => {
   }
 };
 
-startServer();
+if (process.argv[1] === fileURLToPath(import.meta.url)) {
+  startServer();
+}
+
+export default app;

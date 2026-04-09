@@ -17,13 +17,6 @@ jest.unstable_mockModule('../../../src/core/clients/mail.client.js', () => ({
   },
 }));
 
-jest.unstable_mockModule('../../../src/core/utils/logger.js', () => ({
-  default: {
-    log: jest.fn(),
-    error: jest.fn(),
-  },
-}));
-
 jest.unstable_mockModule('../../../src/core/utils/template.engine.js', () => ({
   default: {
     confirmation: jest.fn(() => 'html-content'),

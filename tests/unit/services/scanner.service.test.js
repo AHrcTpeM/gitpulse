@@ -31,14 +31,6 @@ jest.unstable_mockModule('node-cron', () => ({
   },
 }));
 
-jest.unstable_mockModule('../../../src/core/utils/logger.js', () => ({
-  default: {
-    log: jest.fn(),
-    warn: jest.fn(),
-    error: jest.fn(),
-  },
-}));
-
 // 2. Import modules
 const { default: scannerService } = await import('../../../src/core/services/scanner.service.js');
 const { default: db } = await import('../../../src/db/db.js');

@@ -33,14 +33,6 @@ jest.unstable_mockModule('../../../src/core/services/notifier.service.js', () =>
   },
 }));
 
-jest.unstable_mockModule('../../../src/core/utils/logger.js', () => ({
-  default: {
-    log: jest.fn(),
-    warn: jest.fn(),
-    error: jest.fn(),
-  },
-}));
-
 // 2. Import service and mocks
 const { default: subscriptionService } =
   await import('../../../src/core/services/subscription.service.js');

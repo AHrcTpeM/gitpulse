@@ -38,6 +38,8 @@ function getTimestamp() {
 }
 
 function write(level, context, message) {
+  if (process.env.NODE_ENV === 'test') return;
+
   const { color, label } = LEVEL_CONFIG[level];
   const time = getTimestamp();
 
