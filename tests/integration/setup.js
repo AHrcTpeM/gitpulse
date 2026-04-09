@@ -10,7 +10,7 @@ export const clearDatabase = async () => {
   for (const table of tables) {
     try {
       await db(table).del();
-    } catch (e) {
+    } catch {
       // Table might not exist yet
     }
   }
