@@ -13,6 +13,8 @@ const swaggerPath = path.join(__dirname, 'api', 'swagger.yaml');
 const swaggerDocument = yaml.load(swaggerPath);
 const db = require('./db/db');
 const loggingMiddleware = require('./api/middlewares/logging.middleware');
+const metricsMiddleware = require('./api/middlewares/metrics.middleware');
+const { register } = require('./core/utils/metrics');
 
 swaggerDocument.host = `localhost:${process.env.PORT || 3000}`; // TODO:
 
@@ -22,11 +24,21 @@ const PORT = process.env.PORT || 3000;
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(loggingMiddleware);
+app.use(metricsMiddleware);
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 app.get('/health', (req, res) => {
   res.json({ status: 'OK', message: 'GitPulse API is running' });
+});
+
+app.get('/metrics', async (req, res) => {
+  try {
+    res.set('Content-Type', register.contentType);
+    res.end(await register.metrics());
+  } catch (err) {
+    res.status(500).end(err);
+  }
 });
 
 app.use('/api', apiRoutes);
@@ -39,7 +51,6 @@ const startServer = async () => {
     await db.migrate.latest();
     Logger.log('Bootstrap', 'Migrations completed successfully');
 
-    // Запуск фонового сканера
     scannerService.init();
 
     app.listen(PORT, () => {
