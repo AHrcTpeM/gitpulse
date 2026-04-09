@@ -38,7 +38,7 @@ class GitHubClient {
       try {
         const res = await this.client.get(`/repos/${owner}/${repo}/releases/latest`);
         if (res.data && res.data.tag_name) tag = res.data.tag_name;
-      } catch (e) {}
+      } catch {}
 
       if (!tag) {
         const res = await this.client.get(`/repos/${owner}/${repo}/tags`, {

@@ -7,7 +7,7 @@ class SubscriptionService {
   async subscribe(email, repo) {
     if (!repo || !repo.includes('/')) {
       const error = new Error('Invalid repo format. Use owner/repo');
-      error.status = 400;
+      error.status = 401;
       throw error;
     }
     const [owner, repoName] = repo.split('/');
