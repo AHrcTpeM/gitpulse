@@ -9,9 +9,6 @@ class ScannerService {
     this.isScanning = false;
   }
 
-  /**
-   * Запуск фонового завдання
-   */
   init() {
     cron.schedule('0 * * * *', () => {
       Logger.log('Scanner', 'Starting scheduled scan...');
@@ -21,9 +18,6 @@ class ScannerService {
     Logger.log('Scanner', 'Engine initialized');
   }
 
-  /**
-   * Основна логіка сканування
-   */
   async scan() {
     if (this.isScanning) {
       Logger.warn('Scanner', 'Scan already in progress, skipping...');
