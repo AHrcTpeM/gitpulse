@@ -5,7 +5,7 @@ const path = require('path');
 require('dotenv').config();
 
 const apiRoutes = require('./api/subscription.routes');
-const { notFoundHandler, globalErrorHandler } = require('./api/error.handler');
+const { notFoundHandler, globalErrorHandler } = require('./api/middlewares/error.handler');
 const scannerService = require('./core/services/scanner.service');
 const Logger = require('./core/utils/logger');
 

@@ -14,6 +14,8 @@ schemes:
 paths:
   /subscribe:
     post:
+      security:
+        - ApiKeyAuth: []
       tags:
         - "subscription"
       summary: "Subscribe to release notifications"
@@ -40,6 +42,8 @@ paths:
           description: "Subscription successful. Confirmation email sent."
         "400":
           description: "Invalid input (e.g., invalid repo format)"
+        "401":
+          description: "Unauthorized"
         "404":
           description: "Repository not found on GitHub"
         "409":
@@ -90,6 +94,8 @@ paths:
           description: "Token not found"
   /subscriptions:
     get:
+      security:
+        - ApiKeyAuth: []
       tags:
         - "subscription"
       summary: "Get subscriptions for an email"
@@ -112,6 +118,13 @@ paths:
               $ref: "#/definitions/Subscription"
         "400":
           description: "Invalid email"
+        "401":
+          description: "Unauthorized"
+securityDefinitions:
+  ApiKeyAuth:
+    type: "apiKey"
+    in: "header"
+    name: "x-api-key"
 definitions:
   Subscription:
     type: "object"

@@ -16,7 +16,7 @@ class ScannerService {
     // Сканування щогодини (наприклад)
     // Формат: '0 * * * *' (хв год день міс день_тижня)
     // Для тестів можна поставити '*/1 * * * *' (щохвилини)
-    cron.schedule('*/1 * * * *', () => { // TODO:
+    cron.schedule('0 * * * *', () => { // TODO:
       Logger.log('Scanner', 'Starting scheduled scan...');
       this.scan();
     });

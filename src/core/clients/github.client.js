@@ -133,7 +133,7 @@ class GitHubClient {
         const message = `GitHub Rate Limit exceeded. Resets at ${new Date(resetTime * 1000).toLocaleTimeString()}`;
         Logger.error('GitHubClient', message);
         const rateLimitError = new Error(message);
-        rateLimitError.status = 429;
+        rateLimitError.status = 400; // Compromise with the Swagger contract
         throw rateLimitError;
       }
     }
