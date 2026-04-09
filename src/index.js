@@ -13,6 +13,7 @@ import db from './db/db.js';
 import loggingMiddleware from './api/middlewares/logging.middleware.js';
 import metricsMiddleware from './api/middlewares/metrics.middleware.js';
 import { register } from './core/utils/metrics.js';
+import { startGrpcServer } from './grpc/server.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -56,6 +57,7 @@ const startServer = async () => {
     Logger.log('Bootstrap', 'Migrations completed successfully');
 
     scannerService.init();
+    startGrpcServer();
 
     app.listen(PORT, () => {
       Logger.log('Bootstrap', `Server is running on http://localhost:${PORT}`);

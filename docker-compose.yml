@@ -38,6 +38,7 @@ services:
       - REDIS_HOST=redis
     ports:
       - '${PORT:-3000}:${PORT:-3000}'
+      - '50051:50051'
     env_file:
       - .env
     depends_on:
