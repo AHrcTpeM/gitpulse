@@ -1,5 +1,5 @@
-const crypto = require('crypto');
-const Logger = require('../../core/utils/logger');
+import crypto from 'crypto';
+import Logger from '../../core/utils/logger.js';
 
 const loggingMiddleware = (req, res, next) => {
   const start = process.hrtime();
@@ -19,4 +19,4 @@ const loggingMiddleware = (req, res, next) => {
   next();
 };
 
-module.exports = loggingMiddleware;
+export default loggingMiddleware;

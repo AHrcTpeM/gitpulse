@@ -1,9 +1,9 @@
-const db = require('../../db/db');
-const Logger = require('../utils/logger');
-const mailClient = require('../clients/mail.client');
+import db from '../../db/db.js';
+import Logger from '../utils/logger.js';
+import mailClient from '../clients/mail.client.js';
 
 class NotifierService {
-  constructor() { }
+  constructor() {}
 
   /**
    * Відправка листа для підтвердження підписки
@@ -29,7 +29,7 @@ class NotifierService {
         .where('subscribers.confirmed', true)
         .select(
           'subscribers.email',
-          'subscribers.unsubscribe_token', // ДОДАНО
+          'subscribers.unsubscribe_token',
           'repositories.owner',
           'repositories.repo'
         );
@@ -47,7 +47,7 @@ class NotifierService {
           subscriber.owner,
           subscriber.repo,
           newTag,
-          subscriber.unsubscribe_token // ПЕРЕДАЄМО ТОКЕН
+          subscriber.unsubscribe_token
         );
       }
     } catch (error) {
@@ -162,4 +162,4 @@ class NotifierService {
   }
 }
 
-module.exports = new NotifierService();
+export default new NotifierService();

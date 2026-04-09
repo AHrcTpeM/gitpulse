@@ -1,5 +1,5 @@
-const nodemailer = require('nodemailer');
-const Logger = require('../utils/logger');
+import nodemailer from 'nodemailer';
+import Logger from '../utils/logger.js';
 
 class MailClient {
   constructor() {
@@ -53,4 +53,4 @@ class MailClient {
   }
 }
 
-module.exports = new MailClient();
+export default new MailClient();

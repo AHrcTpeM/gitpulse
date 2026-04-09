@@ -1,14 +1,14 @@
-const Logger = require('../../core/utils/logger');
+import Logger from '../../core/utils/logger.js';
 
-const notFoundHandler = (req, res) => {
+export const notFoundHandler = (req, res) => {
   res.status(404).json({
     status: 'error',
     statusCode: 404,
-    message: 'Route not found'
+    message: 'Route not found',
   });
 };
 
-const globalErrorHandler = (err, req, res, next) => {
+export const globalErrorHandler = (err, req, res) => {
   Logger.error('ErrorHandler', err.stack || err.message);
 
   const statusCode = err.status || err.statusCode || 500;
@@ -17,11 +17,6 @@ const globalErrorHandler = (err, req, res, next) => {
     statusCode,
     message: err.message || 'Internal Server Error',
     errors: err.errors || undefined,
-    stack: process.env.NODE_ENV === 'dev' ? err.stack : undefined
+    stack: process.env.NODE_ENV === 'dev' ? err.stack : undefined,
   });
-};
-
-module.exports = {
-  notFoundHandler,
-  globalErrorHandler
 };

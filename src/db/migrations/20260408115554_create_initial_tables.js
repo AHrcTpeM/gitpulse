@@ -2,7 +2,7 @@
  * @param { import("knex").Knex } knex
  * @returns { Promise<void> }
  */
-exports.up = function(knex) {
+export const up = function (knex) {
   return knex.schema
     .createTable('subscribers', (table) => {
       table.increments('id').primary();
@@ -22,8 +22,18 @@ exports.up = function(knex) {
     })
     .createTable('subscriptions', (table) => {
       table.increments('id').primary();
-      table.integer('subscriber_id').unsigned().references('id').inTable('subscribers').onDelete('CASCADE');
-      table.integer('repository_id').unsigned().references('id').inTable('repositories').onDelete('CASCADE');
+      table
+        .integer('subscriber_id')
+        .unsigned()
+        .references('id')
+        .inTable('subscribers')
+        .onDelete('CASCADE');
+      table
+        .integer('repository_id')
+        .unsigned()
+        .references('id')
+        .inTable('repositories')
+        .onDelete('CASCADE');
       table.unique(['subscriber_id', 'repository_id']);
       table.timestamps(true, true);
     });
@@ -33,7 +43,7 @@ exports.up = function(knex) {
  * @param { import("knex").Knex } knex
  * @returns { Promise<void> }
  */
-exports.down = function(knex) {
+export const down = function (knex) {
   return knex.schema
     .dropTableIfExists('subscriptions')
     .dropTableIfExists('repositories')

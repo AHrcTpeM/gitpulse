@@ -1,8 +1,8 @@
-const cron = require('node-cron');
-const db = require('../../db/db');
-const githubClient = require('../clients/github.client');
-const Logger = require('../utils/logger');
-const notifierService = require('./notifier.service');
+import cron from 'node-cron';
+import db from '../../db/db.js';
+import githubClient from '../clients/github.client.js';
+import Logger from '../utils/logger.js';
+import notifierService from './notifier.service.js';
 
 class ScannerService {
   constructor() {
@@ -13,10 +13,7 @@ class ScannerService {
    * Запуск фонового завдання
    */
   init() {
-    // Сканування щогодини (наприклад)
-    // Формат: '0 * * * *' (хв год день міс день_тижня)
-    // Для тестів можна поставити '*/1 * * * *' (щохвилини)
-    cron.schedule('0 * * * *', () => { // TODO:
+    cron.schedule('0 * * * *', () => {
       Logger.log('Scanner', 'Starting scheduled scan...');
       this.scan();
     });
@@ -35,11 +32,11 @@ class ScannerService {
 
     this.isScanning = true;
     try {
-      // 1. Беремо тільки ті репозиторії, у яких є хоча б один підписник
-      const activeRepos = await db('repositories')
-        .whereExists(function () {
-          this.select('*').from('subscriptions').whereRaw('subscriptions.repository_id = repositories.id');
-        });
+      const activeRepos = await db('repositories').whereExists(function () {
+        this.select('*')
+          .from('subscriptions')
+          .whereRaw('subscriptions.repository_id = repositories.id');
+      });
 
       Logger.log('Scanner', `Found ${activeRepos.length} active repositories to scan`);
 
@@ -61,19 +58,18 @@ class ScannerService {
     try {
       const currentTag = await githubClient.getLatestTag(owner, repo);
 
-      if (!currentTag) return; // Релізів немає або помилка
+      if (!currentTag) return;
 
-      // Якщо це перший скан або тег змінився
       if (last_seen_tag !== currentTag) {
-        Logger.log('Scanner', `NEW RELEASE for ${owner}/${repo}: ${last_seen_tag || 'none'} → ${currentTag}`);
+        Logger.log(
+          'Scanner',
+          `NEW RELEASE for ${owner}/${repo}: ${last_seen_tag || 'none'} → ${currentTag}`
+        );
 
-        // Оновлюємо тег у базі
-        await db('repositories')
-          .where({ id })
-          .update({
-            last_seen_tag: currentTag,
-            updated_at: db.fn.now()
-          });
+        await db('repositories').where({ id }).update({
+          last_seen_tag: currentTag,
+          updated_at: db.fn.now(),
+        });
 
         await notifierService.notify(id, currentTag);
       }
@@ -83,4 +79,4 @@ class ScannerService {
   }
 }
 
-module.exports = new ScannerService();
+export default new ScannerService();

@@ -1,22 +1,26 @@
-const express = require('express');
-const swaggerUi = require('swagger-ui-express');
-const yaml = require('yamljs');
-const path = require('path');
-require('dotenv').config();
+import express from 'express';
+import swaggerUi from 'swagger-ui-express';
+import yaml from 'yamljs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import 'dotenv/config';
 
-const apiRoutes = require('./api/subscription.routes');
-const { notFoundHandler, globalErrorHandler } = require('./api/middlewares/error.handler');
-const scannerService = require('./core/services/scanner.service');
-const Logger = require('./core/utils/logger');
+import apiRoutes from './api/subscription.routes.js';
+import { notFoundHandler, globalErrorHandler } from './api/middlewares/error.handler.js';
+import scannerService from './core/services/scanner.service.js';
+import Logger from './core/utils/logger.js';
+import db from './db/db.js';
+import loggingMiddleware from './api/middlewares/logging.middleware.js';
+import metricsMiddleware from './api/middlewares/metrics.middleware.js';
+import { register } from './core/utils/metrics.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const swaggerPath = path.join(__dirname, 'api', 'swagger.yaml');
 const swaggerDocument = yaml.load(swaggerPath);
-const db = require('./db/db');
-const loggingMiddleware = require('./api/middlewares/logging.middleware');
-const metricsMiddleware = require('./api/middlewares/metrics.middleware');
-const { register } = require('./core/utils/metrics');
 
-swaggerDocument.host = `localhost:${process.env.PORT || 3000}`; // TODO:
+swaggerDocument.host = `localhost:${process.env.PORT || 3000}`;
 
 const app = express();
 const PORT = process.env.PORT || 3000;

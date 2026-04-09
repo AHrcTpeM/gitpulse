@@ -1,4 +1,4 @@
-const Logger = require('../../core/utils/logger');
+import Logger from '../../core/utils/logger.js';
 
 const authMiddleware = (req, res, next) => {
   const apiKey = req.headers['x-api-key'];
@@ -9,11 +9,11 @@ const authMiddleware = (req, res, next) => {
     return res.status(401).json({
       status: 'error',
       statusCode: 401,
-      message: 'Invalid or missing API key'
+      message: 'Invalid or missing API key',
     });
   }
 
   next();
 };
 
-module.exports = authMiddleware;
+export default authMiddleware;

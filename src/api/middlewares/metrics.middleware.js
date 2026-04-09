@@ -1,4 +1,4 @@
-const { httpRequestCounter, httpRequestDurationMicroseconds } = require('../../core/utils/metrics');
+import { httpRequestCounter, httpRequestDurationMicroseconds } from '../../core/utils/metrics.js';
 
 const metricsMiddleware = (req, res, next) => {
   const start = process.hrtime();
@@ -20,4 +20,4 @@ const metricsMiddleware = (req, res, next) => {
   next();
 };
 
-module.exports = metricsMiddleware;
+export default metricsMiddleware;

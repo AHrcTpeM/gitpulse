@@ -1,9 +1,9 @@
-const Redis = require('ioredis');
-const Logger = require('../utils/logger');
+import Redis from 'ioredis';
+import Logger from '../utils/logger.js';
 
-const CACHE_TTL_SECONDS = 10 * 60;
+export const CACHE_TTL_SECONDS = 10 * 60;
 
-const redis = new Redis({
+export const redis = new Redis({
   host: process.env.REDIS_HOST || 'localhost',
   port: process.env.REDIS_PORT || 6379,
   lazyConnect: true,
@@ -18,7 +18,7 @@ redis.on('error', (err) => Logger.warn('Redis', `Unavailable, cache disabled: ${
  * @param {string} key
  * @returns {Promise<string|null>}
  */
-async function getCache(key) {
+export async function getCache(key) {
   try {
     return await redis.get(key);
   } catch {
@@ -30,12 +30,10 @@ async function getCache(key) {
  * @param {string} key
  * @param {string} value
  */
-async function setCache(key, value) {
+export async function setCache(key, value) {
   try {
     await redis.set(key, value, 'EX', CACHE_TTL_SECONDS);
   } catch {
     return null;
   }
 }
-
-module.exports = { redis, getCache, setCache, CACHE_TTL_SECONDS };

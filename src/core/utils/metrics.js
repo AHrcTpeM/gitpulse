@@ -1,19 +1,19 @@
-const client = require('prom-client');
+import client from 'prom-client';
 
-const register = new client.Registry();
+export const register = new client.Registry();
 
 client.collectDefaultMetrics({
   register,
   prefix: 'gitpulse_',
 });
 
-const httpRequestCounter = new client.Counter({
+export const httpRequestCounter = new client.Counter({
   name: 'gitpulse_http_requests_total',
   help: 'Total number of HTTP requests',
   labelNames: ['method', 'route', 'status_code'],
 });
 
-const httpRequestDurationMicroseconds = new client.Histogram({
+export const httpRequestDurationMicroseconds = new client.Histogram({
   name: 'gitpulse_http_request_duration_seconds',
   help: 'Duration of HTTP requests in seconds',
   labelNames: ['method', 'route', 'status_code'],
@@ -22,9 +22,3 @@ const httpRequestDurationMicroseconds = new client.Histogram({
 
 register.registerMetric(httpRequestCounter);
 register.registerMetric(httpRequestDurationMicroseconds);
-
-module.exports = {
-  register,
-  httpRequestCounter,
-  httpRequestDurationMicroseconds,
-};

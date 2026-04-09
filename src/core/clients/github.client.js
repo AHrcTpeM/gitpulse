@@ -1,6 +1,6 @@
-const axios = require('axios');
-const { getCache, setCache } = require('./redis.client');
-const Logger = require('../utils/logger');
+import axios from 'axios';
+import { getCache, setCache } from './redis.client.js';
+import Logger from '../utils/logger.js';
 
 class GitHubClient {
   constructor() {
@@ -8,9 +8,9 @@ class GitHubClient {
     this.client = axios.create({
       baseURL: this.baseUrl,
       headers: {
-        'Accept': 'application/vnd.github.v3+json',
-        'User-Agent': 'GitPulse-App'
-      }
+        Accept: 'application/vnd.github.v3+json',
+        'User-Agent': 'GitPulse-App',
+      },
     });
 
     if (process.env.GITHUB_TOKEN) {
@@ -19,8 +19,8 @@ class GitHubClient {
   }
 
   /**
-   * @param {string} owner 
-   * @param {string} repo 
+   * @param {string} owner
+   * @param {string} repo
    * @returns {Promise<string|null>}
    */
   async getLatestTag(owner, repo) {
@@ -38,12 +38,14 @@ class GitHubClient {
       try {
         const res = await this.client.get(`/repos/${owner}/${repo}/releases/latest`);
         if (res.data && res.data.tag_name) tag = res.data.tag_name;
-      } catch (e) { }
+      } catch (e) {}
 
       if (!tag) {
-        const res = await this.client.get(`/repos/${owner}/${repo}/tags`, { params: { per_page: 10 } });
+        const res = await this.client.get(`/repos/${owner}/${repo}/tags`, {
+          params: { per_page: 10 },
+        });
         if (res.data && res.data.length > 0) {
-          tag = this._findLatestVersionTag(res.data.map(t => t.name));
+          tag = this._findLatestVersionTag(res.data.map((t) => t.name));
         }
       }
 
@@ -54,7 +56,7 @@ class GitHubClient {
         ]);
         const allTags = [...(page1.data || []), ...(page2.data || [])];
         if (allTags.length > 0) {
-          tag = this._findLatestVersionTag(allTags.map(t => t.name)) || allTags[0].name;
+          tag = this._findLatestVersionTag(allTags.map((t) => t.name)) || allTags[0].name;
         }
       }
 
@@ -66,8 +68,8 @@ class GitHubClient {
   }
 
   /**
-   * @param {string} owner 
-   * @param {string} repo 
+   * @param {string} owner
+   * @param {string} repo
    * @returns {Promise<boolean>}
    */
   async repositoryExists(owner, repo) {
@@ -100,8 +102,8 @@ class GitHubClient {
     const versionPattern = /^[a-z]*v?(\d+)\.(\d+)\.?(\d*).*$/i;
 
     const versionTags = tags
-      .filter(tag => versionPattern.test(tag))
-      .map(tag => {
+      .filter((tag) => versionPattern.test(tag))
+      .map((tag) => {
         const match = tag.match(/(\d+)\.(\d+)\.?(\d*)/);
         return {
           name: tag,
@@ -143,4 +145,4 @@ class GitHubClient {
   }
 }
 
-module.exports = new GitHubClient();
+export default new GitHubClient();

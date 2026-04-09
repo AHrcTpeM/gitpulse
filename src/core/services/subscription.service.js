@@ -1,7 +1,7 @@
-const db = require('../../db/db');
-const githubClient = require('../clients/github.client');
-const notifierService = require('./notifier.service');
-const Logger = require('../utils/logger');
+import db from '../../db/db.js';
+import githubClient from '../clients/github.client.js';
+import notifierService from './notifier.service.js';
+import Logger from '../utils/logger.js';
 
 class SubscriptionService {
   async subscribe(email, repo) {
@@ -12,7 +12,6 @@ class SubscriptionService {
     }
     const [owner, repoName] = repo.split('/');
 
-    // 1. Пошук або створення репозиторію
     let repository = await db('repositories').where({ owner, repo: repoName }).first();
 
     if (!repository) {
@@ -25,23 +24,26 @@ class SubscriptionService {
 
       const initialTag = await githubClient.getLatestTag(owner, repoName);
 
-      [repository] = await db('repositories').insert({
-        owner,
-        repo: repoName,
-        last_seen_tag: initialTag
-      }).returning('*');
+      [repository] = await db('repositories')
+        .insert({
+          owner,
+          repo: repoName,
+          last_seen_tag: initialTag,
+        })
+        .returning('*');
 
       Logger.log('SubscriptionService', `Created new repository record: ${owner}/${repoName}`);
     }
 
-    // 2. Знайти або створити підписника
     let subscriber = await db('subscribers').where({ email }).first();
     if (!subscriber) {
-      [subscriber] = await db('subscribers').insert({
-        email,
-        confirmation_token: Buffer.from(`${email}-${Date.now()}`).toString('base64'),
-        unsubscribe_token: Buffer.from(`unsub-${email}-${Date.now()}`).toString('base64')
-      }).returning('*');
+      [subscriber] = await db('subscribers')
+        .insert({
+          email,
+          confirmation_token: Buffer.from(`${email}-${Date.now()}`).toString('base64'),
+          unsubscribe_token: Buffer.from(`unsub-${email}-${Date.now()}`).toString('base64'),
+        })
+        .returning('*');
 
       Logger.log('SubscriptionService', `Created new subscriber: ${email}`);
     }
@@ -50,7 +52,6 @@ class SubscriptionService {
       await notifierService.sendConfirmationEmail(email, subscriber.confirmation_token);
     }
 
-    // 3. Створити підписку
     const existingSub = await db('subscriptions')
       .where({ subscriber_id: subscriber.id, repository_id: repository.id })
       .first();
@@ -63,13 +64,13 @@ class SubscriptionService {
 
     await db('subscriptions').insert({
       subscriber_id: subscriber.id,
-      repository_id: repository.id
+      repository_id: repository.id,
     });
 
     return {
       message: subscriber.confirmed
         ? 'Subscription successful'
-        : 'Subscription requested. Please check your email to confirm.'
+        : 'Subscription requested. Please check your email to confirm.',
     };
   }
 
@@ -88,7 +89,9 @@ class SubscriptionService {
     await db('subscribers').where({ id: subscriber.id }).update({ confirmed: true });
     Logger.log('SubscriptionService', `Subscriber confirmed: ${subscriber.email}`);
 
-    return { message: 'Subscription confirmed successfully! You will now receive release notifications.' };
+    return {
+      message: 'Subscription confirmed successfully! You will now receive release notifications.',
+    };
   }
 
   async unsubscribe(token) {
@@ -119,4 +122,4 @@ class SubscriptionService {
   }
 }
 
-module.exports = new SubscriptionService();
+export default new SubscriptionService();

@@ -1,4 +1,4 @@
-const subscriptionService = require('../core/services/subscription.service');
+import subscriptionService from '../core/services/subscription.service.js';
 
 const subscriptionController = {
   subscribe: async (req, res, next) => {
@@ -39,7 +39,7 @@ const subscriptionController = {
     } catch (error) {
       next(error);
     }
-  }
+  },
 };
 
-module.exports = subscriptionController;
+export default subscriptionController;

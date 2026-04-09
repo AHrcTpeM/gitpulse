@@ -1,4 +1,4 @@
-const { body, query, param, validationResult } = require('express-validator');
+import { body, query, param, validationResult } from 'express-validator';
 
 const validate = (req, res, next) => {
   const errors = validationResult(req);
@@ -7,43 +7,46 @@ const validate = (req, res, next) => {
       status: 'error',
       statusCode: 400,
       message: 'Validation failed',
-      errors: errors.array()
+      errors: errors.array(),
     });
   }
   next();
 };
 
-const validateSubscription = [
+export const validateSubscription = [
   body('email')
-    .isEmail().withMessage('Please provide a valid email address')
-    .isLength({ max: 100 }).withMessage('Email is too long (max 100 characters)')
+    .isEmail()
+    .withMessage('Please provide a valid email address')
+    .isLength({ max: 100 })
+    .withMessage('Email is too long (max 100 characters)')
     .normalizeEmail(),
   body('repo')
-    .notEmpty().withMessage('Repository name is required')
-    .isLength({ max: 100 }).withMessage('Repository name is too long (max 100 characters)')
-    .matches(/^[a-zA-Z0-9-._]+\/[a-zA-Z0-9-._]+$/).withMessage('Repository must be in format owner/repo')
+    .notEmpty()
+    .withMessage('Repository name is required')
+    .isLength({ max: 100 })
+    .withMessage('Repository name is too long (max 100 characters)')
+    .matches(/^[a-zA-Z0-9-._]+\/[a-zA-Z0-9-._]+$/)
+    .withMessage('Repository must be in format owner/repo')
     .trim(),
   validate,
 ];
 
-const validateToken = [
+export const validateToken = [
   param('token')
-    .notEmpty().withMessage('Token is required')
-    .isLength({ max: 255 }).withMessage('Token is too long')
+    .notEmpty()
+    .withMessage('Token is required')
+    .isLength({ max: 255 })
+    .withMessage('Token is too long')
     .isString(),
   validate,
 ];
 
-const validateGetSubscriptions = [
+export const validateGetSubscriptions = [
   query('email')
-    .isEmail().withMessage('Please provide a valid email address')
-    .isLength({ max: 100 }).withMessage('Email is too long (max 100 characters)')
+    .isEmail()
+    .withMessage('Please provide a valid email address')
+    .isLength({ max: 100 })
+    .withMessage('Email is too long (max 100 characters)')
     .normalizeEmail(),
   validate,
 ];
-
-module.exports = {
-  validateSubscription,
-  validateToken,
-  validateGetSubscriptions,
-};
