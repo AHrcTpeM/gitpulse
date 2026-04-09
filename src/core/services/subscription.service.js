@@ -24,6 +24,12 @@ class SubscriptionService {
 
       const initialTag = await githubClient.getLatestTag(owner, repoName);
 
+      if (!initialTag) {
+        const error = new Error(`No releases or tags found for ${owner}/${repoName}`);
+        error.status = 404;
+        throw error;
+      }
+
       [repository] = await db('repositories')
         .insert({
           owner,
