@@ -8,7 +8,7 @@ export const notFoundHandler = (req, res) => {
   });
 };
 
-export const globalErrorHandler = (err, req, res) => {
+export const globalErrorHandler = (err, req, res, next) => {
   Logger.error('ErrorHandler', err.stack || err.message);
 
   const statusCode = err.status || err.statusCode || 500;
