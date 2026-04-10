@@ -1,4 +1,4 @@
-:80 {
+gitpulse.duckdns.org {
     # Static files root directory
     root * /usr/src/app/public
     file_server
