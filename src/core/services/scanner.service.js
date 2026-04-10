@@ -15,6 +15,9 @@ class ScannerService {
       this.scan();
     });
 
+    Logger.log('Scanner', 'Performing initial scan on startup...');
+    this.scan();
+
     Logger.log('Scanner', 'Engine initialized');
   }
 
