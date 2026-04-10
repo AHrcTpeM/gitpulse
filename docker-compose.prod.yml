@@ -33,7 +33,7 @@ services:
     build: .
     restart: always
     environment:
-      - NODE_ENV=production
+      - NODE_ENV=prod
       - DB_HOST=db
       - REDIS_HOST=redis
       - PORT=3000

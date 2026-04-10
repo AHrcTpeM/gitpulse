@@ -162,6 +162,19 @@
 
         .section { display: none; }
         .section.active { display: block; }
+
+        footer {
+            text-align: center;
+            margin-top: 2rem;
+            font-size: 0.85rem;
+            color: #64748b;
+            font-weight: 300;
+        }
+
+        footer strong {
+            color: #818cf8;
+            font-weight: 600;
+        }
     </style>
 </head>
 <body>
@@ -210,6 +223,10 @@
             
             <div id="message"></div>
         </div>
+
+        <footer>
+            &copy; 2026 GitPulse. Built for developers by <strong>Ihor Popkov</strong>
+        </footer>
     </div>
 
     <script>
@@ -219,6 +236,39 @@
         const API_KEY = '08c69707-ee6b-4e4c-ac9a-8c7674759600';
 
         const msg = document.getElementById('message');
+
+        // Check for actions in the URL (from email links)
+        window.addEventListener('DOMContentLoaded', async () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const action = urlParams.get('action');
+            const token = urlParams.get('token');
+
+            if (action && token) {
+                msg.innerText = 'Processing your request...';
+                msg.className = '';
+                msg.style.display = 'block';
+
+                try {
+                    const endpoint = action === 'confirm' ? 'confirm' : 'unsubscribe';
+                    const response = await fetch(`${API_URL}/api/${endpoint}/${token}`);
+                    const data = await response.json();
+
+                    if (response.ok) {
+                        msg.innerText = data.message;
+                        msg.className = 'success';
+                    } else {
+                        msg.innerText = data.error || data.message || 'Action failed';
+                        msg.className = 'error';
+                    }
+                } catch (err) {
+                    msg.innerText = 'Connection error';
+                    msg.className = 'error';
+                } finally {
+                    // Clean up URL
+                    window.history.replaceState({}, document.title, window.location.pathname);
+                }
+            }
+        });
 
         function showSection(name) {
             document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));

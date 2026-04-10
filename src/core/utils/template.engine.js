@@ -6,32 +6,40 @@ class TemplateEngine {
     return `
 <!DOCTYPE html>
 <html>
-<body style="margin:0; padding:0; background-color:#0d1117; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;">
-  <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#0d1117; padding: 40px 20px;">
+<body style="margin:0; padding:0; background-color:#0f172a; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#0f172a; padding: 40px 20px;">
     <tr>
       <td align="center">
-        <table width="100%" maxWidth="600" cellpadding="0" cellspacing="0" style="max-width:600px; background-color:#161b22; border: 1px solid #30363d; border-radius: 16px; overflow: hidden; box-shadow: 0 8px 24px rgba(0,0,0,0.4);">
+        <!-- Main Card -->
+        <table width="100%" maxWidth="500" cellpadding="0" cellspacing="0" style="max-width:500px; background-color:#1e293b; border: 1px solid rgba(255,255,255,0.1); border-radius: 24px; overflow: hidden; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);">
           <tr>
             <td style="padding: 48px 40px; text-align: center;">
+              <!-- Logo with Gradient look -->
               <div style="margin-bottom: 24px;">
-                <span style="background: linear-gradient(135deg, #238636 0%, #2ea043 100%); color: white; padding: 12px 20px; border-radius: 12px; font-weight: 800; font-size: 24px; letter-spacing: -0.5px; box-shadow: 0 4px 12px rgba(35, 134, 54, 0.3);">GP</span>
+                <span style="background-color: #6366f1; color: white; padding: 12px 20px; border-radius: 12px; font-weight: 800; font-size: 24px; display: inline-block;">GP</span>
               </div>
+              
               <h1 style="color: #ffffff; font-size: 28px; font-weight: 700; margin: 0 0 16px; letter-spacing: -0.5px;">Welcome to GitPulse</h1>
-              <p style="color: #8b949e; font-size: 16px; line-height: 1.6; margin: 0 0 32px;">
-                Ready to stay on top of your favorite repositories? Confirm your email to start receiving instant release notifications.
+              
+              <p style="color: #94a3b8; font-size: 16px; line-height: 1.6; margin: 0 0 32px;">
+                Stay updated with GitHub releases. Confirm your email to start receiving instant notifications.
               </p>
-              <a href="${confirmUrl}" style="display: inline-block; background-color: #238636; color: #ffffff; text-decoration: none; padding: 14px 38px; border-radius: 8px; font-weight: 600; font-size: 16px; transition: background-color 0.2s; box-shadow: 0 4px 12px rgba(0,0,0,0.2);">
+              
+              <!-- Primary Button -->
+              <a href="${confirmUrl}" style="display: inline-block; background-color: #6366f1; color: #ffffff; text-decoration: none; padding: 16px 40px; border-radius: 12px; font-weight: 600; font-size: 16px; box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);">
                 Confirm Subscription
               </a>
-              <p style="color: #484f58; font-size: 13px; margin: 32px 0 0;">
+              
+              <p style="color: #64748b; font-size: 13px; margin: 32px 0 0;">
                 If you didn't request this, you can safely ignore this email.
               </p>
             </td>
           </tr>
+          <!-- Footer Branding -->
           <tr>
-            <td style="background-color: #0d1117; padding: 24px 40px; text-align: center; border-top: 1px solid #30363d;">
-              <p style="color: #6e7681; font-size: 12px; margin: 0;">
-                &copy; 2026 GitPulse. Built for developers.
+            <td style="background-color: #0f172a; padding: 24px 40px; text-align: center; border-top: 1px solid rgba(255,255,255,0.05);">
+              <p style="color: #64748b; font-size: 12px; margin: 0;">
+                &copy; 2026 GitPulse. Built for developers by <strong style="color: #818cf8;">Ihor Popkov</strong>
               </p>
             </td>
           </tr>
@@ -54,43 +62,52 @@ class TemplateEngine {
     return `
 <!DOCTYPE html>
 <html>
-<body style="margin:0; padding:0; background-color:#0d1117; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;">
-  <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#0d1117; padding: 40px 20px;">
+<body style="margin:0; padding:0; background-color:#0f172a; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#0f172a; padding: 40px 20px;">
     <tr>
       <td align="center">
-        <table width="100%" maxWidth="600" cellpadding="0" cellspacing="0" style="max-width:600px; background-color:#161b22; border: 1px solid #30363d; border-radius: 16px; overflow: hidden; box-shadow: 0 8px 12px rgba(0,0,0,0.4);">
-          <!-- Header -->
+        <!-- Main Card -->
+        <table width="100%" maxWidth="500" cellpadding="0" cellspacing="0" style="max-width:500px; background-color:#1e293b; border: 1px solid rgba(255,255,255,0.1); border-radius: 24px; overflow: hidden; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);">
+          <!-- Gradient Header Bar -->
           <tr>
-            <td style="background: linear-gradient(135deg, #238636 0%, #2ea043 100%); padding: 32px; text-align: center;">
-              <h2 style="color: #ffffff; font-size: 20px; font-weight: 700; margin: 0; text-transform: uppercase; letter-spacing: 1px;">New Release Detected</h2>
-            </td>
+            <td style="height: 6px; background: linear-gradient(to right, #818cf8, #c084fc);"></td>
           </tr>
           <!-- Body -->
           <tr>
             <td style="padding: 40px;">
+              <h2 style="color: #818cf8; font-size: 14px; font-weight: 700; margin: 0 0 24px; text-transform: uppercase; letter-spacing: 2px; text-align: center;">New Release Detected</h2>
+              
               <div style="text-align: center; margin-bottom: 32px;">
-                <h1 style="color: #ffffff; font-size: 24px; margin: 0 0 12px;">
-                  <a href="${repoUrl}" style="color: #58a6ff; text-decoration: none;">${owner}/${repo}</a>
+                <h1 style="color: #ffffff; font-size: 26px; margin: 0 0 16px;">
+                  <a href="${repoUrl}" style="color: #ffffff; text-decoration: none;">${owner}/${repo}</a>
                 </h1>
-                <div style="display: inline-block; background-color: rgba(35, 134, 54, 0.15); border: 1px solid #238636; padding: 8px 20px; border-radius: 20px; color: #3fb950; font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, Liberation Mono, monospace; font-size: 20px; font-weight: 600;">
+                <div style="display: inline-block; background-color: rgba(99, 102, 241, 0.1); border: 1px solid #6366f1; padding: 10px 24px; border-radius: 20px; color: #818cf8; font-family: monospace; font-size: 22px; font-weight: 700;">
                   ${newTag}
                 </div>
               </div>
               
               <div style="text-align: center; margin-bottom: 40px;">
-                <p style="color: #8b949e; font-size: 16px; margin-bottom: 24px;">A new version has been published. Stay up to date with the latest changes.</p>
-                <a href="${releaseUrl}" style="display: inline-block; background-color: #21262d; border: 1px solid #30363d; color: #c9d1d9; text-decoration: none; padding: 12px 32px; border-radius: 6px; font-weight: 600; font-size: 16px; transition: all 0.2s;">
-                  View Release on GitHub
+                <p style="color: #94a3b8; font-size: 16px; margin-bottom: 24px; line-height: 1.6;">A new version is available! Stay up to date with the latest features and fixes.</p>
+                <a href="${releaseUrl}" style="display: inline-block; background-color: #6366f1; color: #ffffff; text-decoration: none; padding: 14px 32px; border-radius: 12px; font-weight: 600; font-size: 16px; box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);">
+                  View on GitHub
                 </a>
               </div>
 
-              <!-- Footer info -->
-              <div style="border-top: 1px solid #30363d; padding-top: 32px; text-align: center;">
-                <p style="color: #6e7681; font-size: 13px; margin: 0 0 12px;">You are receiving this because you subscribed to ${owner}/${repo} updates.</p>
-                <a href="${unsubscribeUrl}" style="color: #f85149; font-size: 12px; text-decoration: none; font-weight: 500;">
-                  Unsubscribe from all notifications
+              <!-- Unsubscribe info -->
+              <div style="border-top: 1px solid rgba(255,255,255,0.05); padding-top: 32px; text-align: center;">
+                <p style="color: #64748b; font-size: 13px; margin: 0 0 12px;">You are receiving this because you subscribed to ${owner}/${repo} updates.</p>
+                <a href="${unsubscribeUrl}" style="color: #f87171; font-size: 12px; text-decoration: none; font-weight: 500;">
+                  Unsubscribe
                 </a>
               </div>
+            </td>
+          </tr>
+          <!-- Footer Branding -->
+          <tr>
+            <td style="background-color: #0f172a; padding: 24px 40px; text-align: center; border-top: 1px solid rgba(255,255,255,0.05);">
+              <p style="color: #64748b; font-size: 12px; margin: 0;">
+                &copy; 2026 GitPulse. Built for developers by <strong style="color: #818cf8;">Ihor Popkov</strong>
+              </p>
             </td>
           </tr>
         </table>

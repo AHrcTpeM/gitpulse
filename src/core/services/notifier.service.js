@@ -10,7 +10,7 @@ class NotifierService {
    * Send confirmation email to new subscriber
    */
   async sendConfirmationEmail(email, token) {
-    const confirmUrl = `${process.env.APP_URL || 'http://localhost:3005'}/api/confirm/${token}`;
+    const confirmUrl = `${process.env.APP_URL || 'http://localhost:3000'}/?action=confirm&token=${token}`;
 
     try {
       await mailClient.send({
@@ -49,7 +49,7 @@ class NotifierService {
       Logger.log('Notifier', `Sending ${subscribers.length} notifications for ${newTag}`);
 
       for (const subscriber of subscribers) {
-        const unsubscribeUrl = `${process.env.APP_URL || 'http://localhost:3005'}/api/unsubscribe/${subscriber.unsubscribe_token}`;
+        const unsubscribeUrl = `${process.env.APP_URL || 'http://localhost:3000'}/?action=unsubscribe&token=${subscriber.unsubscribe_token}`;
 
         await mailClient.send({
           to: subscriber.email,
