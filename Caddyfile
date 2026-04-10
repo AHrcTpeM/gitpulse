@@ -1,0 +1,33 @@
+:80 {
+    # Static files root directory
+    root * /usr/src/app/public
+    file_server
+
+    # API Proxy
+    handle /api* {
+        reverse_proxy app:3000
+    }
+
+    # Swagger Documentation and Metrics Proxy
+    handle /api-docs* {
+        reverse_proxy app:3000
+    }
+    
+    handle /health {
+        reverse_proxy app:3000
+    }
+    
+    handle /metrics {
+        reverse_proxy app:3000
+    }
+
+    # SPA Routing (serves index.html if file not found)
+    handle {
+        try_files {path} /index.html
+    }
+
+    # Logging config
+    log {
+        output file /data/access.log
+    }
+}

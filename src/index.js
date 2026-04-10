@@ -4,6 +4,7 @@ import yaml from 'yamljs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import 'dotenv/config';
+import cors from 'cors';
 
 import apiRoutes from './api/subscription.routes.js';
 import { notFoundHandler, globalErrorHandler } from './api/middlewares/error.handler.js';
@@ -26,6 +27,7 @@ swaggerDocument.host = `localhost:${process.env.PORT || 3000}`;
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(loggingMiddleware);
