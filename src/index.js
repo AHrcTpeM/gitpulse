@@ -22,16 +22,21 @@ const __dirname = path.dirname(__filename);
 const swaggerPath = path.join(__dirname, 'api', 'swagger.yaml');
 const swaggerDocument = yaml.load(swaggerPath);
 
-swaggerDocument.host = `localhost:${process.env.PORT || 3000}`;
+const url = new URL(process.env.APP_URL);
+swaggerDocument.host = url.host;
+swaggerDocument.schemes = [url.protocol.replace(':', '')];
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.use(cors());
+const corsOptions = process.env.NODE_ENV === 'prod' ? { origin: process.env.APP_URL } : {};
+
+app.use(cors(corsOptions));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(loggingMiddleware);
 app.use(metricsMiddleware);
+app.use(express.static(path.join(__dirname, '..', 'public')));
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 

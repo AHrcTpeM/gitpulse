@@ -51,7 +51,10 @@ services:
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
       - prometheus_data:/prometheus
-    # Access to metrics only through internal network or proxy
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.external-url=https://gitpulse.duckdns.org/prometheus'
     depends_on:
       - app
 

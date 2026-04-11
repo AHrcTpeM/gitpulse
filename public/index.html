@@ -230,8 +230,6 @@
     </div>
 
     <script>
-        // Set API_URL here.
-        const API_URL = ''; // for prod '', for local 'http://localhost:3000';
         // Use your API key here
         const API_KEY = '08c69707-ee6b-4e4c-ac9a-8c7674759600';
 
@@ -250,7 +248,7 @@
 
                 try {
                     const endpoint = action === 'confirm' ? 'confirm' : 'unsubscribe';
-                    const response = await fetch(`${API_URL}/api/${endpoint}/${token}`);
+                    const response = await fetch(`/api/${endpoint}/${token}`);
                     const data = await response.json();
 
                     if (response.ok) {
@@ -292,7 +290,7 @@
             btn.disabled = true;
             
             try {
-                const response = await fetch(`${API_URL}/api/subscribe`, {
+                const response = await fetch(`/api/subscribe`, {
                     method: 'POST',
                     headers: { 
                         'Content-Type': 'application/json',
@@ -334,7 +332,7 @@
             container.innerHTML = '';
             
             try {
-                const response = await fetch(`${API_URL}/api/subscriptions?email=${encodeURIComponent(email)}`, {
+                const response = await fetch(`/api/subscriptions?email=${encodeURIComponent(email)}`, {
                     headers: { 'x-api-key': API_KEY }
                 });
 

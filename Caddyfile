@@ -1,32 +1,19 @@
 gitpulse.duckdns.org {
-    # Static files root directory
-    root * /usr/src/app/public
-    file_server
+    # Proxy all requests to the Node.js application
+    reverse_proxy app:3000
 
-    # API Proxy
-    handle /api* {
-        reverse_proxy app:3000
-    }
-
-    # Swagger Documentation and Metrics Proxy
-    handle /api-docs* {
-        reverse_proxy app:3000
+    # Protect Prometheus with basic authentication
+    # User: admin, Password: GitPulse2026!
+    basicauth /prometheus* {
+        admin JDJhJDEyJE45cW84dUxPaWNrZ3gyWk1SWm9NeWVJakpBZ05vM0dEdS42ZlhUbzU2V2s4ODh5OGhTM0t5
     }
     
-    handle /health {
-        reverse_proxy app:3000
-    }
-    
-    handle /metrics {
-        reverse_proxy app:3000
+    # Proxy to Prometheus UI
+    handle /prometheus* {
+        reverse_proxy prometheus:9090
     }
 
-    # SPA Routing (serves index.html if file not found)
-    handle {
-        try_files {path} /index.html
-    }
-
-    # Logging config
+    # Enable access logging
     log {
         output file /data/access.log
     }
