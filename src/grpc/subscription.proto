@@ -1,0 +1,38 @@
+syntax = "proto3";
+
+package subscription;
+
+service SubscriptionService {
+  rpc Subscribe (SubscribeRequest) returns (GenericResponse);
+  rpc Confirm (TokenRequest) returns (GenericResponse);
+  rpc Unsubscribe (TokenRequest) returns (GenericResponse);
+  rpc GetSubscriptions (GetSubscriptionsRequest) returns (SubscriptionsResponse);
+}
+
+message SubscribeRequest {
+  string email = 1;
+  string repo = 2;
+}
+
+message TokenRequest {
+  string token = 1;
+}
+
+message GetSubscriptionsRequest {
+  string email = 1;
+}
+
+message GenericResponse {
+  string message = 1;
+}
+
+message Subscription {
+  string email = 1;
+  string repo = 2;
+  bool confirmed = 3;
+  string last_seen_tag = 4;
+}
+
+message SubscriptionsResponse {
+  repeated Subscription subscriptions = 1;
+}

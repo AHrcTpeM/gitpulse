@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GitPulse | Release Subscription</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --bg: #0f172a;
+            --card-bg: rgba(30, 41, 59, 0.7);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: var(--bg);
+            background: radial-gradient(circle at top right, #1e1b4b, #0f172a);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow-x: hidden;
+            padding: 20px;
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 500px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 2.5rem 2rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 2rem;
+            background: rgba(15, 23, 42, 0.4);
+            padding: 5px;
+            border-radius: 12px;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 10px;
+            text-align: center;
+            cursor: pointer;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.3s;
+            color: #94a3b8;
+        }
+
+        .tab.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            text-align: center;
+            background: linear-gradient(to right, #818cf8, #c084fc);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subtitle { color: #94a3b8; text-align: center; margin-bottom: 2rem; font-weight: 300; }
+
+        .input-group {
+            margin-bottom: 1.25rem;
+        }
+
+        label { display: block; margin-bottom: 0.5rem; font-size: 0.875rem; color: #cbd5e1; margin-left: 0.5rem; }
+
+        input {
+            width: 100%;
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 1rem;
+            color: white;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.2);
+        }
+
+        button {
+            width: 100%;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 1rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, background 0.3s;
+            margin-top: 1rem;
+        }
+
+        button:hover { background: var(--primary-hover); transform: translateY(-2px); }
+        button:disabled { opacity: 0.6; cursor: not-allowed; }
+
+        #message { margin-top: 1.5rem; font-size: 0.875rem; display: none; padding: 1rem; border-radius: 12px; line-height: 1.5; }
+        .success { background: rgba(74, 222, 128, 0.1); color: #4ade80; border: 1px solid rgba(74, 222, 128, 0.2); }
+        .error { background: rgba(248, 113, 113, 0.1); color: #f87171; border: 1px solid rgba(248, 113, 113, 0.2); }
+
+        .sub-list {
+            margin-top: 1rem; text-align: left; padding: 0; list-style: none;
+        }
+
+        .sub-item {
+            background: rgba(255, 255, 255, 0.05); padding: 10px 15px; border-radius: 8px; margin-bottom: 8px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+
+        .sub-repo { font-weight: 600; color: #c084fc; font-size: 0.95rem; }
+        .sub-info { text-align: right; }
+        .sub-status { font-size: 0.7rem; padding: 2px 8px; border-radius: 10px; background: rgba(255, 255, 255, 0.1); display: block; margin-bottom: 4px; }
+        .sub-tag { font-size: 0.65rem; color: #94a3b8; }
+
+        /* Animated background blobs */
+        .blob {
+            position: absolute; width: 300px; height: 300px;
+            background: rgba(99, 102, 241, 0.15); filter: blur(80px);
+            border-radius: 50%; z-index: -1; animation: move 20s infinite alternate;
+        }
+        .blob-1 { top: -100px; right: -100px; }
+        .blob-2 { bottom: -100px; left: -100px; background: rgba(192, 132, 252, 0.15); }
+
+        @keyframes move {
+            from { transform: translate(0, 0); }
+            to { transform: translate(100px, 100px); }
+        }
+
+        .section { display: none; }
+        .section.active { display: block; }
+
+        footer {
+            text-align: center;
+            margin-top: 2rem;
+            font-size: 0.85rem;
+            color: #64748b;
+            font-weight: 300;
+        }
+
+        footer strong {
+            color: #818cf8;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    
+    <div class="container">
+        <h1>GitPulse</h1>
+        <p class="subtitle">Stay updated with GitHub releases</p>
+
+        <div class="card">
+            <div class="tabs">
+                <div class="tab active" onclick="showSection('subscribe')">Subscribe</div>
+                <div class="tab" onclick="showSection('list')">My Subscriptions</div>
+            </div>
+
+            <!-- Subscribe Section -->
+            <div id="subscribe-section" class="section active">
+                <form id="subscribeForm">
+                    <div class="input-group">
+                        <label for="repo">Repository (owner/repo)</label>
+                        <input type="text" id="repo" placeholder="facebook/react" required>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" placeholder="you@example.com" required>
+                    </div>
+                    
+                    <button type="submit" id="subBtn">Subscribe to Releases</button>
+                </form>
+            </div>
+
+            <!-- List Subscriptions Section -->
+            <div id="list-section" class="section">
+                <form id="listForm">
+                    <div class="input-group">
+                        <label for="checkEmail">Email</label>
+                        <input type="email" id="checkEmail" placeholder="you@example.com" required>
+                    </div>
+                    
+                    <button type="submit" id="listBtn">Get My Subscriptions</button>
+                </form>
+                <div id="subscriptions-container"></div>
+            </div>
+            
+            <div id="message"></div>
+        </div>
+
+        <footer>
+            &copy; 2026 GitPulse. Built for developers by <strong>Ihor Popkov</strong>
+        </footer>
+    </div>
+
+    <script>
+        // Use your API key here
+        const API_KEY = '08c69707-ee6b-4e4c-ac9a-8c7674759600';
+
+        const msg = document.getElementById('message');
+
+        // Check for actions in the URL (from email links)
+        window.addEventListener('DOMContentLoaded', async () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const action = urlParams.get('action');
+            const token = urlParams.get('token');
+
+            if (action && token) {
+                msg.innerText = 'Processing your request...';
+                msg.className = '';
+                msg.style.display = 'block';
+
+                try {
+                    const endpoint = action === 'confirm' ? 'confirm' : 'unsubscribe';
+                    const response = await fetch(`/api/${endpoint}/${token}`);
+                    const data = await response.json();
+
+                    if (response.ok) {
+                        msg.innerText = data.message;
+                        msg.className = 'success';
+                    } else {
+                        msg.innerText = data.error || data.message || 'Action failed';
+                        msg.className = 'error';
+                    }
+                } catch (err) {
+                    msg.innerText = 'Connection error';
+                    msg.className = 'error';
+                } finally {
+                    // Clean up URL
+                    window.history.replaceState({}, document.title, window.location.pathname);
+                }
+            }
+        });
+
+        function showSection(name) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            
+            document.getElementById(name + '-section').classList.add('active');
+            const tabIdx = name === 'subscribe' ? 0 : 1;
+            document.querySelectorAll('.tab')[tabIdx].classList.add('active');
+            
+            msg.style.display = 'none';
+        }
+
+        // --- Subscribe Flow ---
+        document.getElementById('subscribeForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const repo = document.getElementById('repo').value;
+            const email = document.getElementById('email').value;
+            
+            const btn = document.getElementById('subBtn');
+            btn.innerText = 'Processing...';
+            btn.disabled = true;
+            
+            try {
+                const response = await fetch(`/api/subscribe`, {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'x-api-key': API_KEY 
+                    },
+                    body: JSON.stringify({ repo, email })
+                });
+
+                const data = await response.json();
+                msg.style.display = 'block';
+
+                if (response.ok) {
+                    msg.innerText = data.message || 'Success! Subscription requested.';
+                    msg.className = 'success';
+                    document.getElementById('subscribeForm').reset();
+                } else {
+                    msg.innerText = data.error || data.message || 'Error occurred';
+                    msg.className = 'error';
+                }
+            } catch (err) {
+                msg.innerText = 'Connection error';
+                msg.className = 'error';
+                msg.style.display = 'block';
+            } finally {
+                btn.innerText = 'Subscribe to Releases';
+                btn.disabled = false;
+            }
+        });
+
+        // --- List Subscriptions Flow ---
+        document.getElementById('listForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('checkEmail').value;
+            const container = document.getElementById('subscriptions-container');
+            
+            const btn = document.getElementById('listBtn');
+            btn.innerText = 'Fetching...';
+            btn.disabled = true;
+            container.innerHTML = '';
+            
+            try {
+                const response = await fetch(`/api/subscriptions?email=${encodeURIComponent(email)}`, {
+                    headers: { 'x-api-key': API_KEY }
+                });
+
+                const data = await response.json();
+                msg.style.display = 'none';
+
+                if (response.ok) {
+                    if (data.length === 0) {
+                        msg.innerText = 'No subscriptions found for this email.';
+                        msg.className = 'error';
+                        msg.style.display = 'block';
+                    } else {
+                        let html = '<ul class="sub-list">';
+                        data.forEach(sub => {
+                            html += `
+                                <li class="sub-item">
+                                    <span class="sub-repo">${sub.repo}</span>
+                                    <div class="sub-info">
+                                        <span class="sub-status">${sub.confirmed ? 'Confirmed' : 'Pending'}</span>
+                                        <span class="sub-tag">${sub.last_seen_tag || 'No tags'}</span>
+                                    </div>
+                                </li>
+                            `;
+                        });
+                        html += '</ul>';
+                        container.innerHTML = html;
+                    }
+                } else {
+                    msg.innerText = data.error || data.message || 'Error fetching subscriptions';
+                    msg.className = 'error';
+                    msg.style.display = 'block';
+                }
+            } catch (err) {
+                msg.innerText = 'Connection error';
+                msg.className = 'error';
+                msg.style.display = 'block';
+            } finally {
+                btn.innerText = 'Get My Subscriptions';
+                btn.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>

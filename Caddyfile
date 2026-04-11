@@ -1,0 +1,20 @@
+gitpulse.duckdns.org {
+    # Proxy all requests to the Node.js application
+    reverse_proxy app:3000
+
+    # Protect Prometheus with basic authentication
+    # User: admin, Password: admin
+    basicauth /prometheus* {
+        admin $2y$05$OQmKewDPRouHb5a419/UyORjF297V.vcSn5CAqCsFmE.u.W3GBsAO
+    }
+    
+    # Proxy to Prometheus UI
+    handle /prometheus* {
+        reverse_proxy prometheus:9090
+    }
+
+    # Enable access logging
+    log {
+        output file /data/access.log
+    }
+}
