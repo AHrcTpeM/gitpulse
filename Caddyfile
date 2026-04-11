@@ -3,9 +3,9 @@ gitpulse.duckdns.org {
     reverse_proxy app:3000
 
     # Protect Prometheus with basic authentication
-    # User: admin, Password: GitPulse2026!
+    # User: admin, Password: admin
     basicauth /prometheus* {
-        admin JDJhJDEyJE45cW84dUxPaWNrZ3gyWk1SWm9NeWVJakpBZ05vM0dEdS42ZlhUbzU2V2s4ODh5OGhTM0t5
+        admin $2y$05$OQmKewDPRouHb5a419/UyORjF297V.vcSn5CAqCsFmE.u.W3GBsAO
     }
     
     # Proxy to Prometheus UI
